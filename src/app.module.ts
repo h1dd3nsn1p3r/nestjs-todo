@@ -9,14 +9,14 @@ import { AppService } from '@/app.service';
 import { TodosModule } from '@/modules/todos/todos.module';
 
 @Module({
-  imports: [
-    ConfigModule.forRoot({
-      load: [appConfig],
-      isGlobal: true,
-    }),
-    TodosModule,
-  ],
-  controllers: [AppController],
-  providers: [AppService],
+	imports: [
+		ConfigModule.forRoot({
+			load: [appConfig],
+			isGlobal: true,
+		}),
+		TodosModule,
+	],
+	controllers: [AppController],
+	providers: [AppService],
 })
 export class AppModule {}

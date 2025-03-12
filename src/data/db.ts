@@ -9,16 +9,16 @@ import * as sqlite3 from 'sqlite3';
 let client: import('sqlite').Database;
 
 (async () => {
-  try {
-    client = await open({
-      filename: './db.sqlite',
-      driver: sqlite3.Database,
-    });
+	try {
+		client = await open({
+			filename: './db.sqlite',
+			driver: sqlite3.Database,
+		});
 
-    console.log('Connected to SQLite database and initialized todos table.');
-  } catch (err: any) {
-    throw new Error(err?.message || 'Failed to connect to the database.');
-  }
+		console.log('Connected to SQLite database and initialized todos table.');
+	} catch (err: any) {
+		throw new Error(err?.message || 'Failed to connect to the database.');
+	}
 })();
 
 /**
@@ -28,14 +28,14 @@ let client: import('sqlite').Database;
  * @since 1.0.0
  */
 export const db = new Proxy({} as import('sqlite').Database, {
-  get(_, prop) {
-    if (!client) {
-      throw new Error(
-        'Database not yet initialized. Please wait for initialization.',
-      );
-    }
-    return Reflect.get(client, prop);
-  },
+	get(_, prop) {
+		if (!client) {
+			throw new Error(
+				'Database not yet initialized. Please wait for initialization.',
+			);
+		}
+		return Reflect.get(client, prop);
+	},
 });
 
 /**
@@ -45,8 +45,8 @@ export const db = new Proxy({} as import('sqlite').Database, {
  * @since 1.0.0
  */
 export async function closeDatabaseConnection(): Promise<void> {
-  if (client) {
-    await client.close();
-    console.log('Database connection closed.');
-  }
+	if (client) {
+		await client.close();
+		console.log('Database connection closed.');
+	}
 }
