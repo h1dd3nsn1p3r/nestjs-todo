@@ -103,22 +103,37 @@ export class TodosService {
 	 * Update the todo via id.
 	 *
 	 * @param {number} id
-	 * @param {string} title
+	 * @param {Record<string, any>} data
 	 * @returns {Promise<Record<string, any>>}
 	 * @throws {Error}
 	 * @memberof TodosService
 	 * @since 1.0.0
 	 */
-	public async update(id: number, title: string): Promise<Record<string, any>> {
+	public async update(
+		id: number,
+		data: Record<string, any>,
+	): Promise<Record<string, any>> {
 		try {
-			const result = await db.get(
-				`UPDATE todos SET title = ? WHERE id = ? RETURNING *`,
-				[title, id],
-			);
+			const todo = await db.get(`SELECT * FROM todos WHERE id = ?`, [id]);
 
-			if (!result || !Object.keys(result).length) {
-				throw new Error('Failed to update todo.');
+			if (!todo || !Object.keys(todo).length) {
+				throw new Error('Invalid todo id.');
 			}
+
+			const fields = Object.keys(data);
+
+			if (fields.includes('title')) {
+				todo.title = data.title;
+			}
+
+			if (fields.includes('completed')) {
+				todo.completed = data.completed;
+			}
+
+			const result = await db.get(
+				`UPDATE todos SET title = ?, completed = ? WHERE id = ? RETURNING *`,
+				[todo.title, todo.completed, id],
+			);
 
 			return {
 				id: result.id,

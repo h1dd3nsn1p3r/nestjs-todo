@@ -113,11 +113,24 @@ export class TodosController {
 			if (!body || !Object.keys(body).length) {
 				return res.status(400).json({
 					status: false,
-					message: 'Bad request! Required todo data is missing.',
+					message: 'Bad request! required data is missing.',
 				});
 			}
 
-			const result = await this.todosService.update(id, body.title);
+			let data: Record<string, any> = {};
+
+			if (body.title && body?.title?.trim().length > 0) {
+				data = { title: body.title };
+			}
+
+			if (
+				Object.hasOwn(body, 'completed') &&
+				typeof body.completed === 'boolean'
+			) {
+				data = { ...data, completed: body.completed };
+			}
+
+			const result = await this.todosService.update(id, data);
 
 			return res.json({ status: true, data: result });
 		} catch (err: any) {
@@ -143,7 +156,7 @@ export class TodosController {
 
 			return res.json({
 				status: result ? true : false,
-				message: result ? 'Todo deleted!' : 'Todo not found!',
+				message: result ? 'Todo deleted!' : 'Invalid todo id.',
 			});
 		} catch (err: any) {
 			return res.status(500).json({ status: false, message: err.message });
